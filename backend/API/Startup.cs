@@ -1,3 +1,4 @@
+using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,18 +11,23 @@ namespace API
 {
     public class Startup
     {
-        private readonly IConfiguration _Config ;
+        private readonly IConfiguration _config;
         public Startup(IConfiguration config)
         {
-            _Config = config;
+            _config = config;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+           
+            services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+
             services.AddControllers();
-            services.AddDbContext<StoreContext>(x => 
-            x.UseSqlite(_Config.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<StoreContext>(x =>
+            {
+                x.UseSqlite(_config.GetConnectionString("DefaultConnection"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
